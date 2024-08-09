@@ -71,6 +71,7 @@ void publishMessage()
     doc["created_at"] = millis() - t1;
     doc["voltage"] = voltage;
     doc["current"] = current;
+    doc["power"] = power;
     doc["energy"] = energy;
     doc["freq"] = freq;
     doc["pf"] = pf;
