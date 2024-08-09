@@ -6,6 +6,9 @@
 #include "WiFi.h"
 #include <PZEM004Tv30.h>
 #include <UUID.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
 /*
  *
  *  Global variables
@@ -22,6 +25,9 @@
 
 PZEM004Tv30 pzem(Serial2, 16, 17);
 UUID uuid;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+
 
 float voltage;
 float current;
@@ -29,6 +35,7 @@ float power;
 float energy;
 float freq;
 float pf;
+String formattedDate;
 
 
 WiFiClientSecure wifi_client = WiFiClientSecure();
@@ -76,7 +83,7 @@ void publishMessage()
 {
     StaticJsonDocument<200> doc;
     doc["id"] = uuid;
-    doc["created_at"] = millis() - t1;
+    doc["created_at"] = formattedDate;
     doc["voltage"] = voltage;
     doc["current"] = current;
     doc["power"] = power;
@@ -125,12 +132,18 @@ void setup()
 {
     Serial.begin(115200);
     pinMode(LED_BUILTIN, OUTPUT);
-    t1 = millis();
     connectAWS();
+    timeClient.begin();
+    timeClient.setTimeOffset(10800);
 }
 
 void loop()
 {
+    while (!timeClient.update())
+    {
+        timeClient.forceUpdate();
+    }
+    formattedDate = timeClient.getFormattedDate();
     voltage = pzem.voltage();
     current = pzem.current();
     power = pzem.power();

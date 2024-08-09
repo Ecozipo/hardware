@@ -2,8 +2,8 @@
 
 #define THINGNAME "ESP32-thing"
 
-const char WIFI_SSID[] = "Void:()";
-const char WIFI_PASSWORD[] = "Valiciokely";
+const char WIFI_SSID[] = "OayOaRyLala";
+const char WIFI_PASSWORD[] = "maman'lah5";
 const char AWS_IOT_ENDPOINT[] = "a395l7lep46wzc-ats.iot.us-east-1.amazonaws.com";
 
 // Amazon Root CA 1
