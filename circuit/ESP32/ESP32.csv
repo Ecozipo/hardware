@@ -1,0 +1,8 @@
+"Source:","C:\Users\randr\Bureau\o\Kicad\ESP32\ESP32\ESP32.kicad_sch"
+"Date:","8/8/2024 11:15:22 PM"
+"Tool:","Eeschema 7.0.9"
+"Generator:","C:\Program Files\KiCad\7.0\bin\scripting\plugins/bom_csv_grouped_by_value_with_fp.py"
+"Component Count:","2"
+"Ref","Qnty","Value","Cmp name","Footprint","Description","Vendor","DNP"
+"J1-ESP1","1","Conn_01x18_Socket","Conn_01x18_Socket","Connector_PinHeader_2.54mm:PinHeader_1x18_P2.54mm_Vertical","Generic connector, single row, 01x18, script generated","",""
+"J2-ESP1","1","Conn_01x18_Socket","Conn_01x18_Socket","Connector_PinHeader_2.54mm:PinHeader_1x18_P2.54mm_Vertical","Generic connector, single row, 01x18, script generated","",""
