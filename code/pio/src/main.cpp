@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 #include <PZEM004Tv30.h>
+#include <UUID.h>
 /*
  *
  *  Global variables
@@ -13,8 +14,15 @@
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pzem"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/led"
 #define LED_BUILTIN 2
+/*
+ *
+ *  Class Instance
+ *
+ */
 
 PZEM004Tv30 pzem(Serial2, 16, 17);
+UUID uuid;
+
 float voltage;
 float current;
 float power;
@@ -67,7 +75,7 @@ void connectAWS()
 void publishMessage()
 {
     StaticJsonDocument<200> doc;
-    doc["id"] = random(1000);
+    doc["id"] = uuid;
     doc["created_at"] = millis() - t1;
     doc["voltage"] = voltage;
     doc["current"] = current;
@@ -129,7 +137,7 @@ void loop()
     energy = pzem.energy();
     freq = pzem.frequency();
     pf = pzem.pf();
-
+    uuid.generate();
     publishMessage();
     mqtt_client.loop();
     delay(4000);
