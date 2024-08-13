@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>E:\EcoZipo\PZEM004T\pzem004t\pzem004t.kicad_sch</source>
+    <date>09/08/2024 16:45:44</date>
+    <tool>Eeschema 7.0.9</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>pzem004t.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="F1">
+      <value>Fuse</value>
+      <footprint>Fuse:Fuseholder_Cylinder-5x20mm_Schurter_0031_8201_Horizontal_Open</footprint>
+      <libsource lib="Device" part="Fuse" description="Fuse"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Fuse"/>
+      <property name="ki_keywords" value="fuse"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ac576d00-7267-4e2a-ab93-63c808377255</tstamps>
+    </comp>
+    <comp ref="J1-ESP1">
+      <value>Conn_01x18_Socket</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x18_P2.54mm_Vertical</footprint>
+      <libsource lib="Connector" part="Conn_01x18_Socket" description="Generic connector, single row, 01x18, script generated"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Generic connector, single row, 01x18, script generated"/>
+      <property name="ki_keywords" value="connector"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cc0f4899-0256-4c71-a727-69381909a244</tstamps>
+    </comp>
+    <comp ref="J1pzem1">
+      <value>Screw_Terminal_01x02</value>
+      <footprint>TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal</footprint>
+      <libsource lib="Connector" part="Screw_Terminal_01x02" description="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="ki_keywords" value="screw terminal"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>04ee18ae-5540-4337-9fec-729a4a8feedf</tstamps>
+    </comp>
+    <comp ref="J2-ESP1">
+      <value>Conn_01x18_Socket</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x18_P2.54mm_Vertical</footprint>
+      <libsource lib="Connector" part="Conn_01x18_Socket" description="Generic connector, single row, 01x18, script generated"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Generic connector, single row, 01x18, script generated"/>
+      <property name="ki_keywords" value="connector"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>841617b3-f94c-4feb-8c58-ecf7dd25a596</tstamps>
+    </comp>
+    <comp ref="Jin-LN1">
+      <value>Screw_Terminal_01x02</value>
+      <footprint>TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal</footprint>
+      <libsource lib="Connector" part="Screw_Terminal_01x02" description="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="ki_keywords" value="screw terminal"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>39f21240-4085-4802-acd0-78c50d750fad</tstamps>
+    </comp>
+    <comp ref="Jout-LN1">
+      <value>Screw_Terminal_01x02</value>
+      <footprint>TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal</footprint>
+      <libsource lib="Connector" part="Screw_Terminal_01x02" description="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="ki_keywords" value="screw terminal"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a068abc8-9317-482f-b521-06f3de1910cd</tstamps>
+    </comp>
+    <comp ref="Jpzem004T1">
+      <value>Conn_01x04_Socket</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal</footprint>
+      <libsource lib="Connector" part="Conn_01x04_Socket" description="Generic connector, single row, 01x04, script generated"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Generic connector, single row, 01x04, script generated"/>
+      <property name="ki_keywords" value="connector"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>32a6b398-f8c6-4c48-ab38-fd5eef7eec92</tstamps>
+    </comp>
+    <comp ref="PS1">
+      <value>HLK-PM01</value>
+      <footprint>Converter_ACDC:Converter_ACDC_HiLink_HLK-PMxx</footprint>
+      <datasheet>http://www.hlktech.net/product_detail.php?ProId=54</datasheet>
+      <libsource lib="Converter_ACDC" part="HLK-PM01" description="Compact AC/DC board mount power module 3W 5V"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="pzem004t.kicad_sch"/>
+      <property name="ki_description" value="Compact AC/DC board mount power module 3W 5V"/>
+      <property name="ki_keywords" value="AC/DC module power supply"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f564c50b-1d54-43f9-9f8a-3a42c582586d</tstamps>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector" part="Conn_01x04_Socket">
+      <description>Generic connector, single row, 01x04, script generated</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x04_Socket</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector" part="Conn_01x18_Socket">
+      <description>Generic connector, single row, 01x18, script generated</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x18_Socket</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+        <pin num="11" name="Pin_11" type="passive"/>
+        <pin num="12" name="Pin_12" type="passive"/>
+        <pin num="13" name="Pin_13" type="passive"/>
+        <pin num="14" name="Pin_14" type="passive"/>
+        <pin num="15" name="Pin_15" type="passive"/>
+        <pin num="16" name="Pin_16" type="passive"/>
+        <pin num="17" name="Pin_17" type="passive"/>
+        <pin num="18" name="Pin_18" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector" part="Screw_Terminal_01x02">
+      <description>Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>TerminalBlock*:*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Screw_Terminal_01x02</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Converter_ACDC" part="HLK-PM01">
+      <description>Compact AC/DC board mount power module 3W 5V</description>
+      <docs>http://www.hlktech.net/product_detail.php?ProId=54</docs>
+      <footprints>
+        <fp>Converter*ACDC*HiLink*HLK?PM*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">PS</field>
+        <field name="Value">HLK-PM01</field>
+        <field name="Footprint">Converter_ACDC:Converter_ACDC_HiLink_HLK-PMxx</field>
+        <field name="Datasheet">http://www.hlktech.net/product_detail.php?ProId=54</field>
+      </fields>
+      <pins>
+        <pin num="1" name="AC/L" type="power_in"/>
+        <pin num="2" name="AC/N" type="power_in"/>
+        <pin num="3" name="-Vout" type="power_out"/>
+        <pin num="4" name="+Vout" type="power_out"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="Fuse">
+      <description>Fuse</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>*Fuse*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">F</field>
+        <field name="Value">Fuse</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector">
+      <uri>C:\Program Files\KiCad\7.0\share\kicad\symbols\/Connector.kicad_sym</uri>
+    </library>
+    <library logical="Converter_ACDC">
+      <uri>C:\Program Files\KiCad\7.0\share\kicad\symbols\/Converter_ACDC.kicad_sym</uri>
+    </library>
+    <library logical="Device">
+      <uri>C:\Program Files\KiCad\7.0\share\kicad\symbols\/Device.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="3.3Vesp">
+      <node ref="J2-ESP1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+    </net>
+    <net code="2" name="5V">
+      <node ref="J1-ESP1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Jpzem004T1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="PS1" pin="4" pinfunction="+Vout" pintype="power_out"/>
+    </net>
+    <net code="3" name="CLKesp">
+      <node ref="J2-ESP1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+    </net>
+    <net code="4" name="CMDesp">
+      <node ref="J1-ESP1" pin="3" pinfunction="Pin_3" pintype="passive"/>
+    </net>
+    <net code="5" name="D0esp">
+      <node ref="J2-ESP1" pin="5" pinfunction="Pin_5" pintype="passive"/>
+    </net>
+    <net code="6" name="D2esp">
+      <node ref="J2-ESP1" pin="7" pinfunction="Pin_7" pintype="passive"/>
+    </net>
+    <net code="7" name="D4esp">
+      <node ref="J2-ESP1" pin="8" pinfunction="Pin_8" pintype="passive"/>
+    </net>
+    <net code="8" name="D5esp">
+      <node ref="J2-ESP1" pin="11" pinfunction="Pin_11" pintype="passive"/>
+    </net>
+    <net code="9" name="D12esp">
+      <node ref="J1-ESP1" pin="7" pinfunction="Pin_7" pintype="passive"/>
+    </net>
+    <net code="10" name="D13esp">
+      <node ref="J1-ESP1" pin="6" pinfunction="Pin_6" pintype="passive"/>
+    </net>
+    <net code="11" name="D14esp">
+      <node ref="J1-ESP1" pin="8" pinfunction="Pin_8" pintype="passive"/>
+    </net>
+    <net code="12" name="D15esp">
+      <node ref="J2-ESP1" pin="6" pinfunction="Pin_6" pintype="passive"/>
+    </net>
+    <net code="13" name="D18esp">
+      <node ref="J2-ESP1" pin="12" pinfunction="Pin_12" pintype="passive"/>
+    </net>
+    <net code="14" name="D19esp">
+      <node ref="J2-ESP1" pin="13" pinfunction="Pin_13" pintype="passive"/>
+    </net>
+    <net code="15" name="D21esp">
+      <node ref="J2-ESP1" pin="14" pinfunction="Pin_14" pintype="passive"/>
+    </net>
+    <net code="16" name="D22esp">
+      <node ref="J2-ESP1" pin="17" pinfunction="Pin_17" pintype="passive"/>
+    </net>
+    <net code="17" name="D23esp">
+      <node ref="J2-ESP1" pin="18" pinfunction="Pin_18" pintype="passive"/>
+    </net>
+    <net code="18" name="D25esp">
+      <node ref="J1-ESP1" pin="11" pinfunction="Pin_11" pintype="passive"/>
+    </net>
+    <net code="19" name="D26esp">
+      <node ref="J1-ESP1" pin="10" pinfunction="Pin_10" pintype="passive"/>
+    </net>
+    <net code="20" name="D27esp">
+      <node ref="J1-ESP1" pin="9" pinfunction="Pin_9" pintype="passive"/>
+    </net>
+    <net code="21" name="D32esp">
+      <node ref="J1-ESP1" pin="13" pinfunction="Pin_13" pintype="passive"/>
+    </net>
+    <net code="22" name="D33esp">
+      <node ref="J1-ESP1" pin="12" pinfunction="Pin_12" pintype="passive"/>
+    </net>
+    <net code="23" name="D34esp">
+      <node ref="J1-ESP1" pin="15" pinfunction="Pin_15" pintype="passive"/>
+    </net>
+    <net code="24" name="D35esp">
+      <node ref="J1-ESP1" pin="14" pinfunction="Pin_14" pintype="passive"/>
+    </net>
+    <net code="25" name="ENesp">
+      <node ref="J1-ESP1" pin="18" pinfunction="Pin_18" pintype="passive"/>
+    </net>
+    <net code="26" name="GNDesp">
+      <node ref="J1-ESP1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="Jpzem004T1" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="PS1" pin="3" pinfunction="-Vout" pintype="power_out"/>
+    </net>
+    <net code="27" name="Net-(J1pzem1-Pin_1)">
+      <node ref="J1pzem1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Jin-LN1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Jout-LN1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="PS1" pin="1" pinfunction="AC/L" pintype="power_in"/>
+    </net>
+    <net code="28" name="Net-(J1pzem1-Pin_2)">
+      <node ref="F1" pin="1" pintype="passive"/>
+      <node ref="J1pzem1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="Jout-LN1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="PS1" pin="2" pinfunction="AC/N" pintype="power_in"/>
+    </net>
+    <net code="29" name="Net-(Jin-LN1-Pin_2)">
+      <node ref="F1" pin="2" pintype="passive"/>
+      <node ref="Jin-LN1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+    </net>
+    <net code="30" name="RX0esp">
+      <node ref="J2-ESP1" pin="15" pinfunction="Pin_15" pintype="passive"/>
+    </net>
+    <net code="31" name="RX2esp">
+      <node ref="J2-ESP1" pin="9" pinfunction="Pin_9" pintype="passive"/>
+      <node ref="Jpzem004T1" pin="3" pinfunction="Pin_3" pintype="passive"/>
+    </net>
+    <net code="32" name="SD0esp">
+      <node ref="J2-ESP1" pin="3" pinfunction="Pin_3" pintype="passive"/>
+    </net>
+    <net code="33" name="SD1esp">
+      <node ref="J2-ESP1" pin="4" pinfunction="Pin_4" pintype="passive"/>
+    </net>
+    <net code="34" name="SD2esp">
+      <node ref="J1-ESP1" pin="5" pinfunction="Pin_5" pintype="passive"/>
+    </net>
+    <net code="35" name="SD3esp">
+      <node ref="J1-ESP1" pin="4" pinfunction="Pin_4" pintype="passive"/>
+    </net>
+    <net code="36" name="TX0esp">
+      <node ref="J2-ESP1" pin="16" pinfunction="Pin_16" pintype="passive"/>
+    </net>
+    <net code="37" name="TX2esp">
+      <node ref="J2-ESP1" pin="10" pinfunction="Pin_10" pintype="passive"/>
+      <node ref="Jpzem004T1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+    </net>
+    <net code="38" name="VNesp">
+      <node ref="J1-ESP1" pin="16" pinfunction="Pin_16" pintype="passive"/>
+    </net>
+    <net code="39" name="VPesp">
+      <node ref="J1-ESP1" pin="17" pinfunction="Pin_17" pintype="passive"/>
+    </net>
+  </nets>
+</export>
