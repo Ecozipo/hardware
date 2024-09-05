@@ -16,7 +16,7 @@
  */
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pzem"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/led"
-#define LED_BUILTIN 2
+#define RELAY_1 25
 /*
  *
  *  Class Instance
@@ -48,7 +48,8 @@ void connectAWS()
 {
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    Serial.println("Connecting to Wi-Fi");
+    Serial.print("Connecting to Wi-Fi");
+    Serial.println(WIFI_SSID);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
@@ -118,12 +119,12 @@ void incomingMessageHandler(String& topic, String& payload)
 
     if (strcmp(message, "ON") == 0)
     {
-        digitalWrite(LED_BUILTIN, HIGH);
+        digitalWrite(RELAY_1, HIGH);
         Serial.println("LED turned ON");
     }
     else if (strcmp(message, "OFF") == 0)
     {
-        digitalWrite(LED_BUILTIN, LOW);
+        digitalWrite(RELAY_1, LOW);
         Serial.println("LED turned OFF");
     }
 }
@@ -131,7 +132,7 @@ void incomingMessageHandler(String& topic, String& payload)
 void setup()
 {
     Serial.begin(115200);
-    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(RELAY_1, OUTPUT);
     connectAWS();
     timeClient.begin();
     timeClient.setTimeOffset(10800);
@@ -153,5 +154,5 @@ void loop()
     uuid.generate();
     publishMessage();
     mqtt_client.loop();
-    delay(4000);
+    delay(2000);
 }
