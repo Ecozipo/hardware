@@ -8,6 +8,8 @@
 #include <UUID.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include <ezButton.h>
+
 
 /*
  *
@@ -25,6 +27,40 @@
 #define RELAY_6 13
 #define RELAY_7 32
 #define RELAY_8 33
+
+
+/*
+ *
+ *  Ez Button
+ *
+ */
+
+ezButton sw1(5);
+ezButton sw2(15);
+ezButton sw3(18);
+ezButton sw4(19);
+ezButton sw5(21);
+ezButton sw6(22);
+ezButton sw7(23);
+ezButton sw8(0);
+
+
+/*
+ *
+ * Relay Last state
+ *
+ *
+ */
+
+int reportedRelay1;
+int reportedRelay2;
+int reportedRelay3;
+int reportedRelay4;
+int reportedRelay5;
+int reportedRelay6;
+int reportedRelay7;
+int reportedRelay8;
+
 
 /*
  *
@@ -58,6 +94,7 @@ void incomingMessageHandler(String& topic, String& payload);
 void setupTopics();
 void connectAWS();
 void publishMessage();
+void handleSwitchPress(int relayNumber, int currentSwState);
 
 void setup()
 {
@@ -70,6 +107,9 @@ void setup()
     pinMode(RELAY_6, OUTPUT);
     pinMode(RELAY_7, OUTPUT);
     pinMode(RELAY_8, OUTPUT);
+
+    sw1.setDebounceTime(50);
+
     setupTopics();
     connectAWS();
     timeClient.begin();
@@ -78,6 +118,14 @@ void setup()
 
 void loop()
 {
+    sw1.loop();
+    sw2.loop();
+    sw3.loop();
+    sw4.loop();
+    sw5.loop();
+    sw6.loop();
+    sw7.loop();
+    sw8.loop();
     while (!timeClient.update())
     {
         timeClient.forceUpdate();
@@ -91,8 +139,58 @@ void loop()
     pf = pzem.pf();
     uuid.generate();
     publishMessage();
+
+
+    if (sw1.isPressed() || sw1.isReleased())
+    {
+        int currentSwState = !reportedRelay1;
+        handleSwitchPress(1, currentSwState);
+    }
+
+    if (sw2.isPressed() || sw2.isReleased())
+    {
+        int currentSwState = !reportedRelay2;
+        handleSwitchPress(2, currentSwState);
+    }
+
+    if (sw3.isPressed() || sw3.isReleased())
+    {
+        int currentSwState = !reportedRelay3;
+        handleSwitchPress(3, currentSwState);
+    }
+
+    if (sw4.isPressed() || sw4.isReleased())
+    {
+        int currentSwState = !reportedRelay4;
+        handleSwitchPress(4, currentSwState);
+    }
+
+    if (sw5.isPressed() || sw5.isReleased())
+    {
+        int currentSwState = !reportedRelay5;
+        handleSwitchPress(5, currentSwState);
+    }
+
+    if (sw6.isPressed() || sw6.isReleased())
+    {
+        int currentSwState = !reportedRelay6;
+        handleSwitchPress(6, currentSwState);
+    }
+
+    if (sw7.isPressed() || sw7.isReleased())
+    {
+        int currentSwState = !reportedRelay7;
+        handleSwitchPress(7, currentSwState);
+    }
+
+    if (sw8.isPressed() || sw8.isReleased())
+    {
+        int currentSwState = !reportedRelay8;
+        handleSwitchPress(8, currentSwState);
+    }
+
     mqtt_client.loop();
-    delay(2000);
+    delay(500);
 }
 
 /*
@@ -203,14 +301,14 @@ void incomingMessageHandler(String& topic, String& payload)
         int desiredRelay7 = doc["state"]["desired"]["relay_7"].as<int>();
         int desiredRelay8 = doc["state"]["desired"]["relay_8"].as<int>();
 
-        int reportedRelay1 = doc["state"]["reported"]["relay_1"].as<int>();
-        int reportedRelay2 = doc["state"]["reported"]["relay_2"].as<int>();
-        int reportedRelay3 = doc["state"]["reported"]["relay_3"].as<int>();
-        int reportedRelay4 = doc["state"]["reported"]["relay_4"].as<int>();
-        int reportedRelay5 = doc["state"]["reported"]["relay_5"].as<int>();
-        int reportedRelay6 = doc["state"]["reported"]["relay_6"].as<int>();
-        int reportedRelay7 = doc["state"]["reported"]["relay_7"].as<int>();
-        int reportedRelay8 = doc["state"]["reported"]["relay_8"].as<int>();
+        reportedRelay1 = doc["state"]["reported"]["relay_1"].as<int>();
+        reportedRelay2 = doc["state"]["reported"]["relay_2"].as<int>();
+        reportedRelay3 = doc["state"]["reported"]["relay_3"].as<int>();
+        reportedRelay4 = doc["state"]["reported"]["relay_4"].as<int>();
+        reportedRelay5 = doc["state"]["reported"]["relay_5"].as<int>();
+        reportedRelay6 = doc["state"]["reported"]["relay_6"].as<int>();
+        reportedRelay7 = doc["state"]["reported"]["relay_7"].as<int>();
+        reportedRelay8 = doc["state"]["reported"]["relay_8"].as<int>();
 
         // Compare and update relays based on the desired state
         if (desiredRelay1 != reportedRelay1 || desiredRelay2 != reportedRelay2 || desiredRelay3 != reportedRelay3 || (
@@ -244,4 +342,20 @@ void incomingMessageHandler(String& topic, String& payload)
             mqtt_client.publish(AWS_IOT_LED_SHADOW_UPDATE, updateJson);
         }
     }
+}
+
+void handleSwitchPress(int relayNumber, int currentSwState)
+{
+    StaticJsonDocument<512> updateDoc;
+    String relayKey = "relay_" + String(relayNumber);
+    updateDoc["state"]["desired"][relayKey] = currentSwState;
+
+    char updateJson[512];
+    serializeJson(updateDoc, updateJson);
+
+    mqtt_client.publish(AWS_IOT_LED_SHADOW_UPDATE, updateJson);
+    Serial.print("desired state for ");
+    Serial.print(relayKey);
+    Serial.print(" published: ");
+    Serial.println(updateJson);
 }
