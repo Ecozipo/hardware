@@ -2,8 +2,8 @@
 
 #define THINGNAME "Spare"
 
-const char WIFI_SSID[] = "ODC STAFF";
-const char WIFI_PASSWORD[] = "T3nyM1af1na";
+const char WIFI_SSID[] = "Void:()";
+const char WIFI_PASSWORD[] = "Valiciokely";
 const char AWS_IOT_ENDPOINT[] = "a27g25yfuax5ui-ats.iot.us-east-1.amazonaws.com";
 
 // Amazon Root CA 1
