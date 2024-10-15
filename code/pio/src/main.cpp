@@ -42,7 +42,7 @@ ezButton sw4(19);
 ezButton sw5(21);
 ezButton sw6(22);
 ezButton sw7(23);
-ezButton sw8(0);
+ezButton sw8(34);
 
 
 /*
@@ -103,12 +103,19 @@ void setup()
     pinMode(RELAY_2, OUTPUT);
     pinMode(RELAY_3, OUTPUT);
     pinMode(RELAY_4, OUTPUT);
-    pinMode(RELAY_5, OUTPUT);
+    pinMode(RELAY_5, INPUT_PULLUP);
     pinMode(RELAY_6, OUTPUT);
     pinMode(RELAY_7, OUTPUT);
     pinMode(RELAY_8, OUTPUT);
 
     sw1.setDebounceTime(50);
+    sw2.setDebounceTime(50);
+    sw3.setDebounceTime(50);
+    sw4.setDebounceTime(50);
+    sw5.setDebounceTime(50);
+    sw6.setDebounceTime(50);
+    sw7.setDebounceTime(50);
+    sw8.setDebounceTime(50);
 
     setupTopics();
     connectAWS();
@@ -137,6 +144,8 @@ void loop()
     energy = pzem.energy();
     freq = pzem.frequency();
     pf = pzem.pf();
+
+    Serial.println(pzem.voltage());
     uuid.generate();
     publishMessage();
 
