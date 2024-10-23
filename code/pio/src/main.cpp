@@ -1,361 +1,201 @@
-#include<Arduino.h>
-#include "config.h"
-#include <WiFiClientSecure.h>
-#include <MQTTClient.h>
-#include <ArduinoJson.h>
-#include "WiFi.h"
-#include <PZEM004Tv30.h>
-#include <UUID.h>
-#include <NTPClient.h>
-#include <WiFiUdp.h>
-#include <ezButton.h>
+//declaration de toute les libraires
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+//declaration OLED
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+// On an arduino UNO:       A4(SDA), A5(SCL)
+#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+//declaration sur le waterflow sensor 
+byte sensorPin       = 2;
+byte sensorInterrupt = 0;
+float calibrationFactor = 4.5;
+volatile byte pulseCount;  
+float flowRate;
+unsigned int flowMilliLitres;
+unsigned long totalMilliLitres;
+unsigned long oldTime;
 
-/*
- *
- *  Global variables
- *
- */
-#define AWS_IOT_PZEM_SENSOR_TOPIC   "esp32/pzem"
+//realy electrovanne
+const int relayPin = 10;
+bool stateHR =true;
 
+//logo pour oled
+#define LOGO_HEIGHT   16
+#define LOGO_WIDTH    16
+static const unsigned char PROGMEM logo_bmp[] =
+{ 0b00000000, 0b11111111,
+  0b00000001, 0b11111110,
+  0b00000111, 0b11111100,
+  0b00011111, 0b11110000,
+  0b01111111, 0b11000000,
+  0b00000011, 0b11111000,
+  0b00000111, 0b11100000,
+  0b00001111, 0b11000000,
+  0b00011111, 0b10000000,
+  0b00111111, 0b00000000,
+  0b00000111, 0b11000000,
+  0b00001111, 0b10000000,
+  0b00011111, 0b00000000,
+  0b00001110, 0b00000000,
+  0b00000100, 0b00000000,
+  0b00001000, 0b00000000 };
 
-#define RELAY_1 25
-#define RELAY_2 26
-#define RELAY_3 27
-#define RELAY_4 14
-#define RELAY_5 12
-#define RELAY_6 13
-#define RELAY_7 32
-#define RELAY_8 33
+int count = 0;
 
+void setup() {
+  //initialisation serial
+  Serial.begin(9600);
 
-/*
- *
- *  Ez Button
- *
- */
+  /*####################################Initialisation screen#####################################*/
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, LOW);
 
-ezButton sw1(5);
-ezButton sw2(15);
-ezButton sw3(18);
-ezButton sw4(19);
-ezButton sw5(21);
-ezButton sw6(22);
-ezButton sw7(23);
-ezButton sw8(0);
+  /*####################################Initialisation screen#####################################*/
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+  display.display();
+  delay(10); // Pause for 2 seconds
+  // Clear the buffer
+  display.clearDisplay();
+  //loading ...
+  display.drawPixel(50, 25, SSD1306_WHITE);
+  display.display();
+  delay(1000);
+  display.drawPixel(60, 25, SSD1306_WHITE);
+  display.display();
+  delay(1000);
+  display.drawPixel(70, 25, SSD1306_WHITE);
+  display.display();
+  delay(2000);
+  //display SPARE message
+  display.clearDisplay();
+  display.setTextSize(3.5);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(20, 20);
+  display.setFont();
+  display.println("SPARE");
+  display.display();
+  delay(1000);
+  display.startscrolldiagleft(0x07, 0xff);
+  delay(4000);
+  display.stopscroll();
+  delay(1000);
+  //draw logo
+  testdrawbitmap();    
+  display.invertDisplay(true);
+  delay(1000);
+  display.invertDisplay(false);
+  delay(1000);
 
-
-/*
- *
- * Relay Last state
- *
- *
- */
-
-int reportedRelay1;
-int reportedRelay2;
-int reportedRelay3;
-int reportedRelay4;
-int reportedRelay5;
-int reportedRelay6;
-int reportedRelay7;
-int reportedRelay8;
-
-
-/*
- *
- *  Class Instance
- *
- */
-
-PZEM004Tv30 pzem(Serial2, 16, 17);
-UUID uuid;
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP);
-
-
-float voltage;
-float current;
-float power;
-float energy;
-float freq;
-float pf;
-String formattedDate;
-String AWS_IOT_LED_SHADOW_UPDATE;
-String AWS_IOT_LED_SHADOW_ACCEPTED;
-String AWS_IOT_LED_SHADOW_DELTA;
-String AWS_IOT_LED_SHADOW_GET;
-
-
-WiFiClientSecure wifi_client = WiFiClientSecure();
-MQTTClient mqtt_client = MQTTClient(2048);
-
-void incomingMessageHandler(String& topic, String& payload);
-void setupTopics();
-void connectAWS();
-void publishMessage();
-void handleSwitchPress(int relayNumber, int currentSwState);
-
-void setup()
-{
-    Serial.begin(115200);
-    pinMode(RELAY_1, OUTPUT);
-    pinMode(RELAY_2, OUTPUT);
-    pinMode(RELAY_3, OUTPUT);
-    pinMode(RELAY_4, OUTPUT);
-    pinMode(RELAY_5, OUTPUT);
-    pinMode(RELAY_6, OUTPUT);
-    pinMode(RELAY_7, OUTPUT);
-    pinMode(RELAY_8, OUTPUT);
-
-    sw1.setDebounceTime(50);
-
-    setupTopics();
-    connectAWS();
-    timeClient.begin();
-    timeClient.setTimeOffset(10800);
+   /*####################################water flow sensor#####################################*/
+  pinMode(sensorPin, INPUT);
+  digitalWrite(sensorPin, HIGH);
+  pulseCount        = 0;
+  flowRate          = 0.0;
+  flowMilliLitres   = 0;
+  totalMilliLitres  = 0;
+  oldTime           = 0;
+  attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
 }
 
-void loop()
-{
-    sw1.loop();
-    sw2.loop();
-    sw3.loop();
-    sw4.loop();
-    sw5.loop();
-    sw6.loop();
-    sw7.loop();
-    sw8.loop();
-    while (!timeClient.update())
-    {
-        timeClient.forceUpdate();
+void loop() {
+   /*####################################water flow sensor#####################################*/
+   if((millis() - oldTime) > 1000)    // Only process counters once per second
+  { 
+    detachInterrupt(sensorInterrupt);
+    flowRate = ((1000.0 / (millis() - oldTime)) * pulseCount) / calibrationFactor;
+    oldTime = millis();
+    flowMilliLitres = (flowRate / 60) * 1000;
+    totalMilliLitres += flowMilliLitres;
+    unsigned int frac;
+    Serial.print("Flow rate: ");
+    Serial.print(int(flowRate));  // Print the integer part of the variable
+    Serial.print("L/min");
+    Serial.print("\t"); 		  // Print tab space
+    // Print the cumulative total of litres flowed since starting
+    Serial.print("Output Liquid Quantity: ");        
+    Serial.print(totalMilliLitres);
+    Serial.println("mL"); 
+    Serial.print("\t"); 		  // Print tab space
+  	Serial.print(totalMilliLitres/1000);
+	  Serial.print("L");
+    // Reset the pulse counter so we can start incrementing again
+    pulseCount = 0;
+    // Enable the interrupt again now that we've finished sending output
+    attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+  }
+
+   /*####################################affichage sur oled#####################################*/
+  if(flowRate>0){
+    display.clearDisplay();
+    display.setTextSize(3);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(20,0);
+    display.print(F("DEBIT "));
+    if(flowRate<10){
+    display.setCursor(55,25);
+    display.print(int(flowRate));  
+    } else{
+      display.setCursor(45,25);
+    display.print(int(flowRate));
     }
-    formattedDate = timeClient.getFormattedDate();
-    voltage = pzem.voltage();
-    current = pzem.current();
-    power = pzem.power();
-    energy = pzem.energy();
-    freq = pzem.frequency();
-    pf = pzem.pf();
-    uuid.generate();
-    publishMessage();
+    display.setCursor(50,50);  
+    display.setTextSize(1);
+    display.println(F("L/min")); 
+
+    display.display();
+  }else{
+    display.clearDisplay();
+    display.setTextSize(3);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(20,0); 
+    display.println(F("CONSO"));
+    display.setCursor(0,30);
+    float tank = totalMilliLitres;
+    display.print(float(tank/1000));
+    display.println(F(" L"));
+    display.display();
+  }
+ /*####################################test hydrovanne#####################################*/
+ if(stateHR==true){
+  digitalWrite(relayPin, HIGH);
+  stateHR=false;
+ }else{
+  digitalWrite(relayPin, LOW);
+  stateHR=true;
+ }
+   
 
 
-    if (sw1.isPressed() || sw1.isReleased())
-    {
-        int currentSwState = !reportedRelay1;
-        handleSwitchPress(1, currentSwState);
-    }
+  delay(500);
 
-    if (sw2.isPressed() || sw2.isReleased())
-    {
-        int currentSwState = !reportedRelay2;
-        handleSwitchPress(2, currentSwState);
-    }
-
-    if (sw3.isPressed() || sw3.isReleased())
-    {
-        int currentSwState = !reportedRelay3;
-        handleSwitchPress(3, currentSwState);
-    }
-
-    if (sw4.isPressed() || sw4.isReleased())
-    {
-        int currentSwState = !reportedRelay4;
-        handleSwitchPress(4, currentSwState);
-    }
-
-    if (sw5.isPressed() || sw5.isReleased())
-    {
-        int currentSwState = !reportedRelay5;
-        handleSwitchPress(5, currentSwState);
-    }
-
-    if (sw6.isPressed() || sw6.isReleased())
-    {
-        int currentSwState = !reportedRelay6;
-        handleSwitchPress(6, currentSwState);
-    }
-
-    if (sw7.isPressed() || sw7.isReleased())
-    {
-        int currentSwState = !reportedRelay7;
-        handleSwitchPress(7, currentSwState);
-    }
-
-    if (sw8.isPressed() || sw8.isReleased())
-    {
-        int currentSwState = !reportedRelay8;
-        handleSwitchPress(8, currentSwState);
-    }
-
-    mqtt_client.loop();
-    delay(500);
 }
 
-/*
- *
- *
- *  FUNCTIONs DEFINITIONS
- *
- */
-
-void setupTopics()
+void pulseCounter()
 {
-    AWS_IOT_LED_SHADOW_UPDATE = "$aws/things/" + String(THINGNAME) + "/shadow/update";
-    AWS_IOT_LED_SHADOW_ACCEPTED = "$aws/things/" + String(THINGNAME) + "/shadow/get/accepted";
-    AWS_IOT_LED_SHADOW_GET = "$aws/things/" + String(THINGNAME) + "/shadow/get";
-    AWS_IOT_LED_SHADOW_DELTA = "$aws/things/" + String(THINGNAME) + "/shadow/update/delta";
+  pulseCount++;
 }
 
-void connectAWS()
-{
-    // connect to internet via wifi
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    Serial.print("Connecting to Wi-Fi");
-    Serial.println(WIFI_SSID);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-    }
-    Serial.println();
+void testdrawbitmap(void) {
+  display.clearDisplay();
 
-    //ESP32 handle TLS Communication to secure connection
-    wifi_client.setCACert(AWS_CERT_CA);
-    wifi_client.setCertificate(AWS_CERT_CRT);
-    wifi_client.setPrivateKey(AWS_CERT_PRIVATE);
-
-    mqtt_client.begin(AWS_IOT_ENDPOINT, 8883, wifi_client);
-    mqtt_client.onMessage(incomingMessageHandler);
-
-    Serial.print("Connecting to AWS IOT");
-    while (!mqtt_client.connect(THINGNAME))
-    {
-        Serial.print(".");
-        delay(100);
-    }
-    Serial.println();
-    if (!mqtt_client.connected())
-    {
-        Serial.println("AWS IoT Timeout!");
-        return;
-    }
-    mqtt_client.subscribe(AWS_IOT_LED_SHADOW_UPDATE);
-    mqtt_client.subscribe(AWS_IOT_LED_SHADOW_DELTA);
-    mqtt_client.subscribe(AWS_IOT_LED_SHADOW_ACCEPTED);
-    mqtt_client.publish(AWS_IOT_LED_SHADOW_GET, "");
-    Serial.println("AWS IoT Connected!");
+  display.drawBitmap(
+    (display.width()  - LOGO_WIDTH ) / 2,
+    (display.height() - LOGO_HEIGHT) / 2,
+    logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
+  display.display();
+  delay(1000);
 }
 
-void publishMessage()
-{
-    StaticJsonDocument<200> doc;
-    doc["id"] = uuid;
-    doc["created_at"] = formattedDate;
-    doc["voltage"] = voltage;
-    doc["current"] = current;
-    doc["power"] = power;
-    doc["energy"] = energy;
-    doc["freq"] = freq;
-    doc["pf"] = pf;
-
-    char jsonBuffer[512];
-    serializeJson(doc, jsonBuffer);
-
-    mqtt_client.publish(AWS_IOT_PZEM_SENSOR_TOPIC, jsonBuffer);
-    // Serial.println("message sent !");
-}
-
-void incomingMessageHandler(String& topic, String& payload)
-{
-    Serial.println("Message received!");
-    Serial.println("Topic: " + topic);
-    Serial.println("Payload: " + payload);
-
-    StaticJsonDocument<400> doc; // Increased size for more relays
-    DeserializationError error = deserializeJson(doc, payload);
-
-    if (error)
-    {
-        Serial.print(F("deserializeJson() failed: "));
-        Serial.println(error.f_str());
-        return;
-    }
-
-    if (String(topic) == AWS_IOT_LED_SHADOW_DELTA)
-    {
-        mqtt_client.publish(AWS_IOT_LED_SHADOW_GET, "");
-    }
-
-    if (String(topic) == AWS_IOT_LED_SHADOW_ACCEPTED)
-    {
-        // Safely extract integer values for each relay from the JSON
-        int desiredRelay1 = doc["state"]["desired"]["relay_1"].as<int>();
-        int desiredRelay2 = doc["state"]["desired"]["relay_2"].as<int>();
-        int desiredRelay3 = doc["state"]["desired"]["relay_3"].as<int>();
-        int desiredRelay4 = doc["state"]["desired"]["relay_4"].as<int>();
-        int desiredRelay5 = doc["state"]["desired"]["relay_5"].as<int>();
-        int desiredRelay6 = doc["state"]["desired"]["relay_6"].as<int>();
-        int desiredRelay7 = doc["state"]["desired"]["relay_7"].as<int>();
-        int desiredRelay8 = doc["state"]["desired"]["relay_8"].as<int>();
-
-        reportedRelay1 = doc["state"]["reported"]["relay_1"].as<int>();
-        reportedRelay2 = doc["state"]["reported"]["relay_2"].as<int>();
-        reportedRelay3 = doc["state"]["reported"]["relay_3"].as<int>();
-        reportedRelay4 = doc["state"]["reported"]["relay_4"].as<int>();
-        reportedRelay5 = doc["state"]["reported"]["relay_5"].as<int>();
-        reportedRelay6 = doc["state"]["reported"]["relay_6"].as<int>();
-        reportedRelay7 = doc["state"]["reported"]["relay_7"].as<int>();
-        reportedRelay8 = doc["state"]["reported"]["relay_8"].as<int>();
-
-        // Compare and update relays based on the desired state
-        if (desiredRelay1 != reportedRelay1 || desiredRelay2 != reportedRelay2 || desiredRelay3 != reportedRelay3 || (
-                desiredRelay4 != reportedRelay4) || (desiredRelay5 != reportedRelay5) || (desiredRelay6 !=
-                reportedRelay6)
-            || (desiredRelay7 != reportedRelay7) || (desiredRelay8 != reportedRelay8))
-        {
-            digitalWrite(RELAY_1, desiredRelay1 == 1 ? HIGH : LOW);
-            digitalWrite(RELAY_2, desiredRelay2 == 1 ? HIGH : LOW);
-            digitalWrite(RELAY_3, desiredRelay3 == 1 ? HIGH : LOW);
-            digitalWrite(RELAY_4, desiredRelay4 == 1 ? HIGH : LOW);
-            digitalWrite(RELAY_5, desiredRelay5 == 1 ? HIGH : LOW);
-            digitalWrite(RELAY_6, desiredRelay6 == 1 ? HIGH : LOW);
-            digitalWrite(RELAY_7, desiredRelay7 == 1 ? HIGH : LOW);
-            digitalWrite(RELAY_8, desiredRelay8 == 1 ? HIGH : LOW);
-
-            // Create a JSON payload to update the reported state
-            StaticJsonDocument<512> updateDoc;
-            updateDoc["state"]["reported"]["relay_1"] = desiredRelay1;
-            updateDoc["state"]["reported"]["relay_2"] = desiredRelay2;
-            updateDoc["state"]["reported"]["relay_3"] = desiredRelay3;
-            updateDoc["state"]["reported"]["relay_4"] = desiredRelay4;
-            updateDoc["state"]["reported"]["relay_5"] = desiredRelay5;
-            updateDoc["state"]["reported"]["relay_6"] = desiredRelay6;
-            updateDoc["state"]["reported"]["relay_7"] = desiredRelay7;
-            updateDoc["state"]["reported"]["relay_8"] = desiredRelay8;
-
-            char updateJson[512];
-            serializeJson(updateDoc, updateJson);
-
-            mqtt_client.publish(AWS_IOT_LED_SHADOW_UPDATE, updateJson);
-        }
-    }
-}
-
-void handleSwitchPress(int relayNumber, int currentSwState)
-{
-    StaticJsonDocument<512> updateDoc;
-    String relayKey = "relay_" + String(relayNumber);
-    updateDoc["state"]["desired"][relayKey] = currentSwState;
-
-    char updateJson[512];
-    serializeJson(updateDoc, updateJson);
-
-    mqtt_client.publish(AWS_IOT_LED_SHADOW_UPDATE, updateJson);
-    Serial.print("desired state for ");
-    Serial.print(relayKey);
-    Serial.print(" published: ");
-    Serial.println(updateJson);
-}
+#define XPOS   0 // Indexes into the 'icons' array in function below
+#define YPOS   1
+#define DELTAY 2
